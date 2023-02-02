@@ -22,24 +22,24 @@
  
  function create_block_settings_init(  ) { 
  
-     register_setting( 'pluginPage', 'create_block_settings' );
+    register_setting( 'pluginPage', 'create_block_settings' );
  
-     add_settings_section(
+    add_settings_section(
          'create_block_pluginPage_section', 
          __( '', 'create_block' ), 
          'create_block_settings_section_callback', 
          'pluginPage'
-     );
+    );
  
-     add_settings_field( 
+    add_settings_field( 
          'block_name', 
-         __( 'Block Name', 'create_block' ), 
+         __( 'Block Name*', 'create_block' ), 
          'block_name_render', 
          'pluginPage', 
          'create_block_pluginPage_section' 
-     );
+    );
 
-     add_settings_field( 
+    add_settings_field( 
         'block_icon', 
         __( 'Block Icon', 'create_block' ), 
         'block_icon_render', 
@@ -47,7 +47,15 @@
         'create_block_pluginPage_section' 
     );
 
-     add_settings_field( 
+    add_settings_field( 
+        'block_keywords', 
+        __( 'Block Keywords', 'create_block' ), 
+        'block_keywords_render', 
+        'pluginPage', 
+        'create_block_pluginPage_section' 
+    );
+
+    add_settings_field( 
         'block_category', 
         __( 'Block Category', 'create_block' ), 
         'block_category_render', 
@@ -62,24 +70,18 @@
  
      $options = get_option( 'create_block_settings' );
      ?>
-     <input type='text' name='create_block_settings[block_name]'>
+     <input type='text' placeholder='Example Block...' name='create_block_settings[block_name]'>
      <?php
  
  }
 
- function block_icon_render(  ) { 
- 
-    $options = get_option( 'create_block_settings' );
-    ?>
-    <input type='text' name='create_block_settings[block_icon]'>
+ function block_icon_render(  ) { ?>
+    <input type='text' placeholder='editor-contract...' name='create_block_settings[block_icon]'>
+    <p>From <a href="https://developer.wordpress.org/resource/dashicons/#podio" target="_blank">Dashicons</a></p>
     <?php
-
 }
   
- function block_category_render(  ) { 
- 
-    $options = get_option( 'create_block_settings' );
-    ?>
+ function block_category_render(  ) { ?>
     <select name='create_block_settings[block_category]'>
         <option value="common">Common</option>
         <option value="formatting">Formatting</option>
@@ -88,14 +90,17 @@
         <option value="embed">Embed</option>
     </select>
     <?php
+}
 
+function block_keywords_render(  ) { ?>
+    <input type='text' placeholder='Keyword 1, Keyword 2' name='create_block_settings[block_keywords]'>
+    <p>Comma seperated</p>
+    <?php
 }
  
  
  function create_block_settings_section_callback(  ) { 
- 
-     echo __( 'Quickly generate an ACF block. Enter your block name like "Example Block".', 'create_block' );
- 
+    echo __( '<p>Quickly generate an ACF block. Enter your block name like "Example Block".</p>', 'create_block' );
  }
 
 add_action( 'wp_ajax_create_block', 'create_block' );
@@ -105,6 +110,10 @@ add_action( 'wp_ajax_nopriv_create_block', 'create_block' );
     $name = $_POST['name'];
     $category = $_POST['category'];
     $icon = $_POST['icon'];
+    $keywords = $_POST['keywords'];
+    $keys = explode (', ', $keywords);   
+    $keys = array_map(function($x){ return '"'.$x.'"'; }, $keys); 
+
     $slug = sanitize_title($_POST['name']);
     $file_name = '/'.$slug;
 
@@ -121,7 +130,7 @@ add_action( 'wp_ajax_nopriv_create_block', 'create_block' );
         "description": "A simple '.strtolower($name).'",
         "category": "'.$category.'",
         "icon": "'.$icon.'",
-        "keywords": ["'.$slug.'"],
+        "keywords": ['.implode(', ', $keys).'],
         "acf": {
             "mode": "preview",
             "renderTemplate": "'.$slug.'.php"
@@ -143,6 +152,7 @@ add_action( 'wp_ajax_nopriv_create_block', 'create_block' );
                     var name = $('input[name="create_block_settings[block_name]"]').val();
                     var category = $('select[name="create_block_settings[block_category]"]').val();
                     var icon = $('input[name="create_block_settings[block_icon]"]').val();
+                    var keywords = $('input[name="create_block_settings[block_keywords]"]').val();
 
                     if(name != '') {
                         $.ajax({
@@ -154,6 +164,7 @@ add_action( 'wp_ajax_nopriv_create_block', 'create_block' );
                                 name: name,
                                 category: category,
                                 icon: icon,
+                                keywords: keywords,
                             },
                             success: function (data) {
                                 console.log(data);
