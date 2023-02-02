@@ -3,11 +3,10 @@
 /*
  * Plugin Name: ACF Block Generator
  * Description: Quickly create ACF gutenberg blocks. Settings > ACF Block Generator.
- * Version:     1.1.2
+ * Version:     1.1.3
  * Author:      Adam Wilson
  * Author URI:  https://adamwilson.co.uk
  */
-
 
 
 /**
@@ -101,7 +100,7 @@ function block_name_render(  ) {
 
 function block_icon_render(  ) { ?>
 <input type='text' placeholder='editor-contract...' name='create_block_settings[block_icon]'>
-<p>From <a href="https://developer.wordpress.org/resource/dashicons/#podio" target="_blank">Dashicons</a></p>
+<p>From <a href="https://developer.wordpress.org/resource/dashicons/#podio" target="_blank">Dashicons</a>.</p>
 <?php
 }
 
@@ -118,7 +117,7 @@ function block_category_render(  ) { ?>
 
 function block_keywords_render(  ) { ?>
 <input type='text' placeholder='Keyword 1, Keyword 2' name='create_block_settings[block_keywords]'>
-<p>Comma seperated</p>
+<p>Comma seperated.</p>
 <?php
 }
 
