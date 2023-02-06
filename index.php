@@ -3,7 +3,7 @@
 /*
  * Plugin Name: ACF Block Generator
  * Description: Quickly create ACF gutenberg blocks. Settings > ACF Block Generator.
- * Version:     1.1.3
+ * Version:     1.1.4
  * Author:      Adam Wilson
  * Author URI:  https://adamwilson.co.uk
  */
