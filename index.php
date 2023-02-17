@@ -3,7 +3,7 @@
 /*
  * Plugin Name: ACF Block Generator
  * Description: Quickly create ACF gutenberg blocks. Settings > ACF Block Generator.
- * Version:     1.1.4
+ * Version:     1.1.6
  * Author:      Adam Wilson
  * Author URI:  https://adamwilson.co.uk
  */
@@ -58,6 +58,14 @@ function create_block_settings_init(  ) {
     );
 
     add_settings_field( 
+        'block_description', 
+        __( 'Block Description', 'create_block' ), 
+        'block_description_render', 
+        'pluginPage', 
+        'create_block_pluginPage_section' 
+    );
+
+    add_settings_field( 
         'block_icon', 
         __( 'Block Icon', 'create_block' ), 
         'block_icon_render', 
@@ -95,6 +103,13 @@ function block_name_render(  ) {
     $options = get_option( 'create_block_settings' ); ?>
 
     <input type='text' placeholder='Example Block...' name='create_block_settings[block_name]'>
+    <?php
+}
+
+function block_description_render(  ) { 
+    $options = get_option( 'create_block_settings' ); ?>
+
+    <input type='text' placeholder='Example description...' name='create_block_settings[block_description]'>
     <?php
 }
 
@@ -151,6 +166,7 @@ add_action( 'wp_ajax_nopriv_create_block', 'create_block' );
 
 function create_block() { 
     $name = $_POST['name'];
+    $description = $_POST['description'];
     $category = $_POST['category'];
     $icon = $_POST['icon'];
     $keywords = $_POST['keywords'];
@@ -171,7 +187,7 @@ function create_block() {
     $content = '{
         "name": "acf/'.$slug.'",
         "title": "'.$name.'",
-        "description": "A simple '.strtolower($name).'",
+        "description": "'.$description.'",
         "category": "'.$category.'",
         "icon": "'.$icon.'",
         "keywords": ['.implode(', ', $keys).'],
@@ -199,6 +215,7 @@ function create_block_options_page(  ) {  ?>
             $('#submit-form').click(function(e) {
                 e.preventDefault();
                 var name = $('input[name="create_block_settings[block_name]"]').val();
+                var description = $('input[name="create_block_settings[block_description]"]').val();
                 var category = $('select[name="create_block_settings[block_category]"]').val();
                 var icon = $('input[name="create_block_settings[block_icon]"]').val();
                 var keywords = $('input[name="create_block_settings[block_keywords]"]').val();
@@ -212,6 +229,7 @@ function create_block_options_page(  ) {  ?>
                         data: {
                             action: 'create_block',
                             name: name,
+                            description: description,
                             category: category,
                             icon: icon,
                             keywords: keywords,
